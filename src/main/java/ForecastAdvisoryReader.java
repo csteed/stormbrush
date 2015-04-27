@@ -198,7 +198,7 @@ public class ForecastAdvisoryReader {
 	
 	public static void main (String[] args) throws Exception {
 		if (args.length == 0 || ((args.length % 2) != 1)) {
-			System.out.println("Usage: java ForecaseAdvisoryReader {output file name} {;storm1 year} {storm1 name} {storm2 year} {storm2 name} ... ");
+			System.out.println("Usage: java ForecastAdvisoryReader {output file name} {storm1 year} {storm1 name} {storm2 year} {storm2 name} ... ");
 			System.exit(0);
 		}
 		

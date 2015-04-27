@@ -16,7 +16,7 @@ public class CAPanel extends JPanel {
 	private static final int MIN_ALPHA = /*65*//*87*/85;
 	private static final int MAX_ALPHA = 255;
 	private BufferedImage backgroundImage;
-	private BufferedImage wind64Image, wind50Image, wind34Image;
+	private BufferedImage wind64Image, wind50Image, wind34Image, sea12Image;
 	private BufferedImage trackImage;
 	private BufferedImage strokeImage;
 	
@@ -36,7 +36,7 @@ public class CAPanel extends JPanel {
 	//private Color trackColor = new Color(214, 24, 34);
 	//private Color trackColor = new Color(165, 91, 160);
 	//private Color trackColor = new Color(128, 0, 255);
-	private Color trackColor = Color.black;
+	private Color trackColor = Color.darkGray;
 	//private Color trackColor = Color.yellow;
 
 	
@@ -55,6 +55,7 @@ public class CAPanel extends JPanel {
 	public static final Color c64 = new Color (250, 218, 0, MAX_ALPHA);
 	public static final Color c50 = new Color (235, 126, 0, MAX_ALPHA);
 	public static final Color c34 = new Color (177, 72, 0, MAX_ALPHA);
+	public static final Color s12 = new Color (90, 90, 180, MAX_ALPHA);
 
 	// Healey
 	//Color c34 = new Color (111, 33, 23, MAX_ALPHA);
@@ -64,6 +65,7 @@ public class CAPanel extends JPanel {
 	private int spacing_factor_34knots = 12/*12*/;
 	private int spacing_factor_50knots = 10/*8*/;
 	private int spacing_factor_64knots = 8/*4*/;
+	private int spacing_factor_12seas = 14;
 	
 	private int windMatrix[][][] = null;
 	
@@ -166,6 +168,7 @@ public class CAPanel extends JPanel {
 		wind64Image = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		wind50Image = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		wind34Image = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		sea12Image = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 //		tempImage = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		
 		
@@ -244,7 +247,7 @@ public class CAPanel extends JPanel {
 				g2.setColor(c);
 				g2.fill(stroke);
 //				g2.drawImage(strokeImage, (int)stroke.getMinX(), (int)stroke.getMinY(), (int)stroke.getWidth(), (int)stroke.getHeight(), this);
-				g2.setColor(Color.darkGray);
+//				g2.setColor(Color.darkGray);
 				//g2.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue()));
 //				g2.draw(stroke);
 				g2.rotate(-orientation, col, row);
@@ -618,8 +621,6 @@ public class CAPanel extends JPanel {
 	
 	
 	public void drawWindSwaths(Graphics2D g2, BufferedImage strokeImage, ForecastAdvisory advisory0, ForecastAdvisory advisory1, AdvisoryArea area0, AdvisoryArea area1) {
-		
-		
 		// determine the centers for the advisories
 		int x0 = longitudeToX(advisory0.longitude, westBound, eastBound, backgroundImage.getWidth());
 		int y0 = latitudeToY(advisory0.latitude, northBound, southBound, backgroundImage.getHeight());
@@ -687,6 +688,8 @@ public class CAPanel extends JPanel {
 			spacing_factor = spacing_factor_50knots;
 		} else if (area0.value.shortValue() == (short)64) {
 			spacing_factor = spacing_factor_64knots;
+		} else if (area0.value.shortValue() == (short)12) {
+			spacing_factor = spacing_factor_12seas;
 		}
 		
 		if (x0 < x1) {
@@ -1384,6 +1387,7 @@ public class CAPanel extends JPanel {
 			}
 		}
 	}
+
 	public void nextAdvisoryLongStroke(ForecastAdvisory advisory, boolean newStorm) {
 		if (newStorm) {
 			lastAdvisory = null;
@@ -1518,12 +1522,33 @@ public class CAPanel extends JPanel {
 
 		int x = longitudeToX(advisory.longitude, westBound, eastBound, backgroundImage.getWidth());
 		int y = latitudeToY(advisory.latitude, northBound, southBound, backgroundImage.getHeight());
-		
+
+		// 12 ft seas drawing stuff
+		if (advisory.seaRadii != null) {
+			Graphics2D seaG2 = (Graphics2D)sea12Image.getGraphics();
+			seaG2.setColor(new Color(s12.getRed(), s12.getGreen(), s12.getBlue(), shortBrushAlpha));
+
+			if (!firstTrackPoint) {
+				// find the wind area from last advisory
+				AdvisoryArea lastArea = lastAdvisory.seaRadii;
+
+				if (lastArea != null) {
+					drawWindSwaths(seaG2, strokeImage, lastAdvisory, advisory, lastArea, advisory.seaRadii);
+				} else {
+					int spacing_factor = spacing_factor_12seas;
+					Polygon p = convertAdvisoryAreaToPolygon(advisory.latitude, advisory.longitude,
+							advisory.seaRadii.ne, advisory.seaRadii.se, advisory.seaRadii.sw, advisory.seaRadii.nw);
+					drawStrokes(seaG2, strokeImage, p, stroke_width, stroke_height, stroke_width * spacing_factor,
+							stroke_height * spacing_factor, advisory.movement_direction * ForecastAdvisoryReader.DEG2RAD);
+				}
+			}
+		}
+
 		// begin Wind drawing stuff
 		Graphics2D windG2 = null;
 //		Graphics2D windG2 = (Graphics2D) windImage.getGraphics();
 //		windG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		if (advisory.windRadiiList != null) {
 			Iterator areaIterator = advisory.windRadiiList.iterator();
 			while (areaIterator.hasNext()) {
@@ -1611,7 +1636,7 @@ public class CAPanel extends JPanel {
 		if (!firstTrackPoint) {			
 			g2.setColor(this.trackColor);
 			g2.setStroke(new BasicStroke(2.f));
-//			g2.setStroke(new SloppyStroke(2.0f, 3.0f));
+//			g2.setStroke(new SloppyStroke(2.0f, 2.0f));
 //			drawTrack(g2, lastAdvisory, advisory);
 			g2.drawLine(lastPointX, lastPointY, x, y);
 			
@@ -1677,6 +1702,7 @@ public class CAPanel extends JPanel {
 		if (backgroundImage != null) {
 			g2.drawImage(backgroundImage, 0, 0, backgroundImage.getWidth(), backgroundImage.getHeight(), null);
 
+			g2.drawImage(sea12Image, 0, 0, sea12Image.getWidth(), sea12Image.getHeight(), null);
 			g2.drawImage(wind34Image, 0, 0, wind34Image.getWidth(), wind34Image.getHeight(), null);
 			g2.drawImage(wind50Image, 0, 0, wind50Image.getWidth(), wind50Image.getHeight(), null);
 			g2.drawImage(wind64Image, 0, 0, wind64Image.getWidth(), wind64Image.getHeight(), null);

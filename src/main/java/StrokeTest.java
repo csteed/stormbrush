@@ -60,8 +60,8 @@ public class StrokeTest {
 		        CubicCurve2D.Float c = new CubicCurve2D.Float(0.0F,150.0F,400.0F,-50.0F,-100.0F,350.0F,300.0F,150.0F);
 		        
 //				g2.setColor(Color.blue);
-//				g2.setStroke(new WobbleStroke(2.f, 5.f));
-//				g2.draw(l);
+				g2.setStroke(new WobbleStroke(2.f, 5.f));
+				g2.draw(l);
 			}
 		};
 		

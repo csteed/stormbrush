@@ -94,11 +94,11 @@ public class StormArtThread extends Thread {
 					newStorm = false;
 				}
 				
-//			try {
-//				sleep(200);
-//			} catch (Exception ex) {
-//				ex.printStackTrace();
-//			}
+			try {
+				sleep(200);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 			}
 		}
 		/*
