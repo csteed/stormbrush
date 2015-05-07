@@ -62,7 +62,7 @@ public class StormArt extends JFrame implements ActionListener {
 		this.eastImageBound = eastImageBound;
 		this.southImageBound = southImageBound;
 		this.northImageBound = northImageBound;
-		setTitle("Tropical Cyclone Art v0.1 - Chad Steed");
+		setTitle("Tropical Cyclone Art v0.1 - Chad A. Steed");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		resetStormBounds();
@@ -71,8 +71,8 @@ public class StormArt extends JFrame implements ActionListener {
 			storms[i] = getStormInfo((short)collection.stormYear, collection.stormName);
 		}
 		
-		//subsetBackgroundImage();
-		setStormBoundsToBackgroundBounds();
+		subsetBackgroundImage();
+//		setStormBoundsToBackgroundBounds();
 		
 		//selectStorm((short)2005, "Katrina");
 		createMainPanel();
@@ -84,7 +84,7 @@ public class StormArt extends JFrame implements ActionListener {
 		System.out.println("Storm extents are: W="+stormWestBound + "E="+stormEastBound+" S="+stormSouthBound+" N="+stormNorthBound);
 		System.out.println("backgroundImage height = " + backgroundImage.getHeight() + " width=" + backgroundImage.getWidth());
 		
-		stormWestBound -= 5.;
+		stormWestBound -= 8.;
 		stormEastBound += 5.;
 		stormNorthBound += 5.;
 		stormSouthBound -= 5.;
@@ -350,10 +350,12 @@ public class StormArt extends JFrame implements ActionListener {
 //		StormArt app = new StormArt(advisoryList, bestTrackData, backgroundImage, -130., 18., -10., 75.);
 
 		
-		File backgroundImageFile = new File("images/ir_background.gif");
+//		File backgroundImageFile = new File("images/ir_background.gif");
+		File backgroundImageFile = new File("images/GRAY_LR_SR_OB.png");
 		BufferedImage backgroundImage = ImageIO.read(backgroundImageFile);
 		//-115/-60/10/45-105/-40/10/45
-		StormArt app = new StormArt(collectionList, bestTrackData, backgroundImage, -105., -40., 10., 45.);
+//		StormArt app = new StormArt(collectionList, bestTrackData, backgroundImage, -105., -40., 10., 45.);
+		StormArt app = new StormArt(collectionList, bestTrackData, backgroundImage, -180., 180., -90., 90.);
 		
 		/*
 		File backgroundImageFile = new File("images/gmt_na_dark.gif");

@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.*;
 import java.awt.geom.*;
 import jgeodesic.*;
+import stormstroke.*;
 
 
 public class ForecastAdvisoryReader {
@@ -20,8 +21,9 @@ public class ForecastAdvisoryReader {
 	
 	public static ForecastAdvisoryCollection readAdvisories (int stormYear, String stormName) throws Exception {
 		System.out.println("***READING " + stormName + " " + stormYear + " INFO***");
-		
-		ArrayList advisoryList = new ArrayList();
+
+		ForecastAdvisoryCollection advisoryCollection = new ForecastAdvisoryCollection(stormName, stormYear);
+//		ArrayList<ForecastAdvisory> advisoryList = new ArrayList<ForecastAdvisory>();
 		
 		String urlString = www_prefix + "/archive/" + stormYear + "/" + stormName.toUpperCase() + ".shtml?";
 		
@@ -43,7 +45,7 @@ public class ForecastAdvisoryReader {
 				int line_number = 1;
 				
 				ForecastAdvisory advisory = new ForecastAdvisory();
-				advisoryList.add(advisory);
+				advisoryCollection.advisoryList.add(advisory);
 				
 				while ((line2 = advisoryReader.readLine()) != null) {
 					
@@ -188,12 +190,59 @@ public class ForecastAdvisoryReader {
 					
 				}
 				System.out.println("advisory: " + advisory);
-				advisoryReader.close();	
+				advisoryReader.close();
+
+				if (advisoryCollection.advisoryList.size() == 1) {
+					advisoryCollection.maxLongitude = advisoryCollection.minLongitude =advisory.longitude;
+					advisoryCollection.maxLatitude = advisoryCollection.minLatitude = advisory.latitude;
+					advisoryCollection.minWind = advisoryCollection.maxWind = advisory.wind;
+					advisoryCollection.minEyeDiameter = advisoryCollection.maxEyeDiameter = advisory.eye_diameter;
+					advisoryCollection.minGust = advisoryCollection.maxGust = advisory.gust;
+					advisoryCollection.minMovementSpeed = advisoryCollection.maxMovementSpeed = advisory.movement_speed;
+				} else {
+					if (advisory.longitude > advisoryCollection.maxLongitude) {
+						advisoryCollection.maxLongitude = advisory.longitude;
+					}
+					if (advisory.longitude < advisoryCollection.minLongitude) {
+						advisoryCollection.minLongitude = advisory.longitude;
+					}
+					if (advisory.latitude > advisoryCollection.maxLatitude) {
+						advisoryCollection.maxLatitude = advisory.latitude;
+					}
+					if (advisory.latitude < advisoryCollection.minLatitude) {
+						advisoryCollection.minLatitude = advisory.latitude;
+					}
+					if (advisory.wind > advisoryCollection.maxWind) {
+						advisoryCollection.maxWind = advisory.wind;
+					}
+					if (advisory.wind < advisoryCollection.minWind) {
+						advisoryCollection.minWind = advisory.wind;
+					}
+					if (advisory.gust > advisoryCollection.maxGust) {
+						advisoryCollection.maxGust = advisory.gust;
+					}
+					if (advisory.gust < advisoryCollection.minGust) {
+						advisoryCollection.minGust = advisory.gust;
+					}
+					if (advisory.eye_diameter > advisoryCollection.maxEyeDiameter) {
+						advisoryCollection.maxEyeDiameter = advisory.eye_diameter;
+					}
+					if (advisory.eye_diameter < advisoryCollection.minEyeDiameter) {
+						advisoryCollection.minEyeDiameter = advisory.eye_diameter;
+					}
+					if (advisory.movement_speed > advisoryCollection.maxMovementSpeed) {
+						advisoryCollection.maxMovementSpeed = advisory.movement_speed;
+					}
+					if (advisory.movement_speed < advisoryCollection.minMovementSpeed) {
+						advisoryCollection.minMovementSpeed = advisory.movement_speed;
+					}
+				}
 			}
 		}
 		reader.close();
 		
-		return new ForecastAdvisoryCollection(stormName, stormYear, advisoryList); 
+//		return new ForecastAdvisoryCollection(stormName, stormYear, advisoryList);
+		return advisoryCollection;
 	}
 	
 	public static void main (String[] args) throws Exception {

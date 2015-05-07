@@ -31,7 +31,7 @@ public class CAPanel extends JPanel {
 	private double mapWidth, mapHeight;
 	private double xFactor, yFactor;
 	
-	public static final int shortBrushAlpha = 100/*110*//*120*/;
+	public static final int shortBrushAlpha = 50/*110*//*120*/;
 	
 	//private Color trackColor = new Color(214, 24, 34);
 	//private Color trackColor = new Color(165, 91, 160);
@@ -44,28 +44,29 @@ public class CAPanel extends JPanel {
 	private Color seaColor = new Color(190, 192, 195); // political boundaries in background map
 	private Color landColor = new Color(220, 222, 225);
 	// Legible Cities
-	//Color c34 = new Color (48, 29, 123, MAX_ALPHA);
-	//Color c50 = new Color (92, 61, 96, MAX_ALPHA);
-	//Color c64 = new Color (221, 18, 37, MAX_ALPHA);
+//	Color c34 = new Color (48, 29, 123, MAX_ALPHA);
+//	Color c50 = new Color (92, 61, 96, MAX_ALPHA);
+//	Color c64 = new Color (221, 18, 37, MAX_ALPHA);
 	
 	// Dykes
-	//private Color c64 = new Color (253, 242, 188, MAX_ALPHA);
-	//private Color c50 = new Color (250, 200, 109, MAX_ALPHA);
-	//private Color c34 = new Color (190, 125, 73, MAX_ALPHA);
-	public static final Color c64 = new Color (250, 218, 0, MAX_ALPHA);
-	public static final Color c50 = new Color (235, 126, 0, MAX_ALPHA);
+//	private Color c64 = new Color (253, 242, 188, MAX_ALPHA);
+//	private Color c50 = new Color (250, 200, 109, MAX_ALPHA);
+//	private Color c34 = new Color (190, 125, 73, MAX_ALPHA);
+//	public static final Color c64 = new Color (224, 194, 39, MAX_ALPHA);
+    public static final Color c64 = new Color (221, 190, 39, MAX_ALPHA);
+    public static final Color c50 = new Color (235, 126, 0, MAX_ALPHA);
 	public static final Color c34 = new Color (177, 72, 0, MAX_ALPHA);
-	public static final Color s12 = new Color (90, 90, 180, MAX_ALPHA);
+	public static final Color s12 = new Color (113, 113, 209, MAX_ALPHA);
 
 	// Healey
-	//Color c34 = new Color (111, 33, 23, MAX_ALPHA);
-	//Color c50 = new Color (214, 24, 34, MAX_ALPHA);
-	//Color c64 = new Color (165, 91, 160, MAX_ALPHA);
+//	Color c34 = new Color (111, 33, 23, MAX_ALPHA);
+//	Color c50 = new Color (214, 24, 34, MAX_ALPHA);
+//	Color c64 = new Color (165, 91, 160, MAX_ALPHA);
 	
-	private int spacing_factor_34knots = 12/*12*/;
+	private int spacing_factor_34knots = 10/*12*/;
 	private int spacing_factor_50knots = 10/*8*/;
-	private int spacing_factor_64knots = 8/*4*/;
-	private int spacing_factor_12seas = 14;
+	private int spacing_factor_64knots = 10/*4*/;
+	private int spacing_factor_12seas = 8;
 	
 	private int windMatrix[][][] = null;
 	
@@ -246,6 +247,11 @@ public class CAPanel extends JPanel {
 				Rectangle2D.Float stroke = new Rectangle2D.Float(col-stroke_width/2, row-stroke_height/2, stroke_width, stroke_height);
 				g2.setColor(c);
 				g2.fill(stroke);
+				int innerStrokeWidth = stroke_width/2;
+				int innerStrokeHeight = stroke_height/2;
+				Rectangle2D.Float innerStroke = new Rectangle2D.Float(col-innerStrokeWidth/2, row-innerStrokeHeight/2, innerStrokeWidth, innerStrokeHeight);
+				g2.setColor(c.brighter());
+				g2.fill(innerStroke);
 //				g2.drawImage(strokeImage, (int)stroke.getMinX(), (int)stroke.getMinY(), (int)stroke.getWidth(), (int)stroke.getHeight(), this);
 //				g2.setColor(Color.darkGray);
 				//g2.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue()));
@@ -1526,6 +1532,7 @@ public class CAPanel extends JPanel {
 		// 12 ft seas drawing stuff
 		if (advisory.seaRadii != null) {
 			Graphics2D seaG2 = (Graphics2D)sea12Image.getGraphics();
+            seaG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			seaG2.setColor(new Color(s12.getRed(), s12.getGreen(), s12.getBlue(), shortBrushAlpha));
 
 			if (!firstTrackPoint) {
@@ -1558,6 +1565,7 @@ public class CAPanel extends JPanel {
 				BufferedImage strokeImage = null;
 				if (area.value.shortValue() == 34) {
 					windG2 = (Graphics2D)wind34Image.getGraphics();
+                    windG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 //					windG2.setColor(new Color(130, 130, 130));
 //					windG2.setColor(new Color(99, 99, 99));
 //					windG2.setColor(new Color(250, 0, 20));
@@ -1569,6 +1577,7 @@ public class CAPanel extends JPanel {
 //					windG2.draw(p);
 				} else if (area.value.shortValue() == 50) {
 					windG2 = (Graphics2D)wind50Image.getGraphics();
+                    windG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 //					windG2.setColor(new Color(180, 180, 180));
 //					windG2.setColor(new Color(60, 160, 20));
 //					windG2.setColor(new Color(200, 30, 100));
@@ -1581,6 +1590,7 @@ public class CAPanel extends JPanel {
 //					continue;
 				} else if (area.value.shortValue() == 64) {
 					windG2 = (Graphics2D)wind64Image.getGraphics();
+                    windG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 //					windG2.setColor(new Color(220, 220, 220));
 //					windG2.setColor(new Color(250, 250, 20));
 //					windG2.setColor(new Color(255, 0, 156));
@@ -1632,14 +1642,14 @@ public class CAPanel extends JPanel {
 		// begin Track drawing stuff
 		Graphics2D g2 = (Graphics2D) trackImage.getGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		if (!firstTrackPoint) {			
+
+		if (!firstTrackPoint) {
 			g2.setColor(this.trackColor);
 			g2.setStroke(new BasicStroke(2.f));
 //			g2.setStroke(new SloppyStroke(2.0f, 2.0f));
-//			drawTrack(g2, lastAdvisory, advisory);
-			g2.drawLine(lastPointX, lastPointY, x, y);
-			
+			drawTrack(g2, lastAdvisory, advisory);
+//			g2.drawLine(lastPointX, lastPointY, x, y);
+
 		} else {
 			firstTrackPoint = false;
 		}
