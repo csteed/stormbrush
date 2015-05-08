@@ -32,11 +32,12 @@ public class CAPanel extends JPanel {
 	private double xFactor, yFactor;
 	
 	public static final int shortBrushAlpha = 50/*110*//*120*/;
-	
+	public static final int shortBrushAlphaMax = 60;
+    public static final int shortBrushAlphaMin = 10;
 	//private Color trackColor = new Color(214, 24, 34);
 	//private Color trackColor = new Color(165, 91, 160);
 	//private Color trackColor = new Color(128, 0, 255);
-	private Color trackColor = Color.darkGray;
+	private Color trackColor = Color.orange;
 	//private Color trackColor = Color.yellow;
 
 	
@@ -55,14 +56,15 @@ public class CAPanel extends JPanel {
 //	public static final Color c64 = new Color (224, 194, 39, MAX_ALPHA);
     public static final Color c64 = new Color (221, 190, 39, MAX_ALPHA);
     public static final Color c50 = new Color (235, 126, 0, MAX_ALPHA);
-	public static final Color c34 = new Color (177, 72, 0, MAX_ALPHA);
+	public static final Color c34 = new Color (236, 72, 0, MAX_ALPHA);
 	public static final Color s12 = new Color (113, 113, 209, MAX_ALPHA);
 
 	// Healey
 //	Color c34 = new Color (111, 33, 23, MAX_ALPHA);
 //	Color c50 = new Color (214, 24, 34, MAX_ALPHA);
 //	Color c64 = new Color (165, 91, 160, MAX_ALPHA);
-	
+
+	private int spacing_factor_eye = 8;
 	private int spacing_factor_34knots = 10/*12*/;
 	private int spacing_factor_50knots = 10/*8*/;
 	private int spacing_factor_64knots = 10/*4*/;
@@ -197,8 +199,13 @@ public class CAPanel extends JPanel {
 		int rows = (int)(1.5f + (float)bounds.getHeight()/(float)(stroke_y_spacing));
 		
 		stroke_x_spacing = (int)(0.5f + (float)bounds.getWidth()/(float)cols);
+        if (stroke_x_spacing <= 1) {
+            stroke_x_spacing = 2;
+        }
 		stroke_y_spacing = (int)(0.5f + (float)bounds.getHeight()/(float)rows);
-		
+		if (stroke_y_spacing <= 1) {
+            stroke_y_spacing = 2;
+        }
 		ArrayList indexList = new ArrayList(rows*cols);
 		for (int i = 0; i < rows*cols; i++) {
 			while(true) {
@@ -239,6 +246,9 @@ public class CAPanel extends JPanel {
 			int col = index - (row * cols);
 			row = (int)bounds.getMinY() + (row*(stroke_y_spacing));
 			col = (int)bounds.getMinX() + (col*(stroke_x_spacing));
+            if ((stroke_y_spacing-1) <= 0) {
+                System.out.println("Yo");
+            }
 			row += r.nextInt(stroke_y_spacing-1);
 			col += r.nextInt(stroke_x_spacing-1);
 //			System.out.println("row="+row +" col="+col);
@@ -490,6 +500,9 @@ public class CAPanel extends JPanel {
 	}
 	
 	public void drawTrack(Graphics2D g2, ForecastAdvisory advisory0, ForecastAdvisory advisory1) {
+		double orientation = advisory0.movement_direction * ForecastAdvisoryReader.DEG2RAD;
+//		g2.setColor(Color.blue);
+
 		// determine the centers for the advisories
 		int x0 = longitudeToX(advisory0.longitude, westBound, eastBound, backgroundImage.getWidth());
 		int y0 = latitudeToY(advisory0.latitude, northBound, southBound, backgroundImage.getHeight());
@@ -546,9 +559,11 @@ public class CAPanel extends JPanel {
 	//					int ix = longitudeToX(coords[1]*ForecastAdvisoryReader.RAD2DEG, westBound, eastBound, backgroundImage.getWidth());
 						int eye_y = latitudeToY(coords[0]*ForecastAdvisoryReader.RAD2DEG, northBound, southBound, backgroundImage.getHeight());
 						
-						int diameter = (int)iy-eye_y;  
-						g2.drawOval(x-(diameter/2), iy-(diameter/2), diameter, diameter);
-						g2.fillOval(x-(diameter/2), iy-(diameter/2), diameter, diameter);
+						int diameter = (int)iy-eye_y;
+						Ellipse2D.Double eyeShape = new Ellipse2D.Double(x - (diameter / 2), iy - (diameter / 2), diameter, diameter);
+						drawStrokes(g2, strokeImage, eyeShape, stroke_width/2, stroke_height/2, stroke_width * spacing_factor_eye, stroke_height * spacing_factor_eye, orientation);
+//						g2.drawOval(x - (diameter / 2), iy - (diameter / 2), diameter, diameter);
+//						g2.fillOval(x-(diameter/2), iy-(diameter/2), diameter, diameter);
 					}
 				} else {
 					double lon = XToLongitude(iy, westBound, eastBound, backgroundImage.getWidth()) * ForecastAdvisoryReader.DEG2RAD;
@@ -558,9 +573,11 @@ public class CAPanel extends JPanel {
 	//					int ix = longitudeToX(coords[1]*ForecastAdvisoryReader.RAD2DEG, westBound, eastBound, backgroundImage.getWidth());
 						int eye_y = latitudeToY(coords[0]*ForecastAdvisoryReader.RAD2DEG, northBound, southBound, backgroundImage.getHeight());
 						
-						int diameter = (int)x-eye_y;  
-						g2.drawOval(iy-(diameter/2), x-(diameter/2), diameter, diameter);
-						g2.fillOval(iy-(diameter/2), x-(diameter/2), diameter, diameter);
+						int diameter = (int)x-eye_y;
+						Ellipse2D.Double eyeShape = new Ellipse2D.Double(iy - (diameter / 2), x - (diameter / 2), diameter, diameter);
+						drawStrokes(g2, strokeImage, eyeShape, stroke_width/2, stroke_height/2, stroke_width * spacing_factor_eye, stroke_height * spacing_factor_eye, orientation);
+//						g2.drawOval(iy - (diameter / 2), x - (diameter / 2), diameter, diameter);
+//						g2.fillOval(iy-(diameter/2), x-(diameter/2), diameter, diameter);
 					}
 				}
 				
@@ -589,9 +606,12 @@ public class CAPanel extends JPanel {
 	//					int ix = longitudeToX(coords[1]*ForecastAdvisoryReader.RAD2DEG, westBound, eastBound, backgroundImage.getWidth());
 						int eye_y = latitudeToY(coords[0]*ForecastAdvisoryReader.RAD2DEG, northBound, southBound, backgroundImage.getHeight());
 						
-						int diameter = (int)iy-eye_y;  
-						g2.drawOval(x-(diameter/2), iy-(diameter/2), diameter, diameter);
-						g2.fillOval(x-(diameter/2), iy-(diameter/2), diameter, diameter);
+						int diameter = (int)iy-eye_y;
+
+						Ellipse2D.Double eyeShape = new Ellipse2D.Double(x - (diameter / 2), iy - (diameter / 2), diameter, diameter);
+						drawStrokes(g2, strokeImage, eyeShape, stroke_width/2, stroke_height/2, stroke_width * spacing_factor_eye, stroke_height * spacing_factor_eye, orientation);
+//						g2.drawOval(x - (diameter / 2), iy - (diameter / 2), diameter, diameter);
+//						g2.fillOval(x-(diameter/2), iy-(diameter/2), diameter, diameter);
 					}
 				} else {
 					double lon = XToLongitude(iy, westBound, eastBound, backgroundImage.getWidth()) * ForecastAdvisoryReader.DEG2RAD;
@@ -601,9 +621,11 @@ public class CAPanel extends JPanel {
 	//					int ix = longitudeToX(coords[1]*ForecastAdvisoryReader.RAD2DEG, westBound, eastBound, backgroundImage.getWidth());
 						int eye_y = latitudeToY(coords[0]*ForecastAdvisoryReader.RAD2DEG, northBound, southBound, backgroundImage.getHeight());
 						
-						int diameter = (int)x-eye_y;  
-						g2.drawOval(iy-(diameter/2), x-(diameter/2), diameter, diameter);
-						g2.fillOval(iy-(diameter/2), x-(diameter/2), diameter, diameter);
+						int diameter = (int)x-eye_y;
+						Ellipse2D.Double eyeShape = new Ellipse2D.Double(iy - (diameter / 2), x - (diameter / 2), diameter, diameter);
+						drawStrokes(g2, strokeImage, eyeShape, stroke_width/2, stroke_height/2, stroke_width * spacing_factor_eye, stroke_height * spacing_factor_eye, orientation);
+//						g2.drawOval(iy - (diameter / 2), x - (diameter / 2), diameter, diameter);
+//						g2.fillOval(iy-(diameter/2), x-(diameter/2), diameter, diameter);
 					}
 				}
 				
@@ -1512,20 +1534,22 @@ public class CAPanel extends JPanel {
 		lastAdvisory = advisory;
 	}
 	
-	public void nextAdvisory(ForecastAdvisory advisory, boolean newStorm) {
+	public void nextAdvisory(ForecastAdvisoryCollection advisoryCollection, ForecastAdvisory advisory, boolean newStorm) {
 		if (stroke_mode == SMALL_BRUSH_MODE) {
-			nextAdvisorySmallBrush(advisory, newStorm);
+			nextAdvisorySmallBrush(advisoryCollection, advisory, newStorm);
 		} else if (stroke_mode == LONG_STROKE_MODE) {
 			nextAdvisoryLongStroke(advisory, newStorm);
 		}
 	}
 	
-	public void nextAdvisorySmallBrush(ForecastAdvisory advisory, boolean newStorm) {
+	public void nextAdvisorySmallBrush(ForecastAdvisoryCollection advisoryCollection, ForecastAdvisory advisory, boolean newStorm) {
 		if (newStorm) {
 	//		lastAdvisory = null;
 			firstTrackPoint = true;
 		}
 
+        double norm = (double)(advisory.wind - advisoryCollection.minWind) / (double)(advisoryCollection.maxWind - advisoryCollection.minWind);
+        int brushAlpha = (int)(shortBrushAlphaMin + (norm * (shortBrushAlphaMax - shortBrushAlphaMin)));
 		int x = longitudeToX(advisory.longitude, westBound, eastBound, backgroundImage.getWidth());
 		int y = latitudeToY(advisory.latitude, northBound, southBound, backgroundImage.getHeight());
 
@@ -1533,7 +1557,7 @@ public class CAPanel extends JPanel {
 		if (advisory.seaRadii != null) {
 			Graphics2D seaG2 = (Graphics2D)sea12Image.getGraphics();
             seaG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			seaG2.setColor(new Color(s12.getRed(), s12.getGreen(), s12.getBlue(), shortBrushAlpha));
+			seaG2.setColor(new Color(s12.getRed(), s12.getGreen(), s12.getBlue(), brushAlpha));
 
 			if (!firstTrackPoint) {
 				// find the wind area from last advisory
@@ -1571,7 +1595,7 @@ public class CAPanel extends JPanel {
 //					windG2.setColor(new Color(250, 0, 20));
 //					windG2.setColor(new Color(250, 250, 20));  // yellow
 //					windG2.setColor(new Color(252, 153, 154)); // red with low saturation
-					windG2.setColor(new Color(c34.getRed(), c34.getGreen(), c34.getBlue(), shortBrushAlpha));
+					windG2.setColor(new Color(c34.getRed(), c34.getGreen(), c34.getBlue(), brushAlpha));
 					strokeImage = wind34Stroke;
 //					Polygon p = convertAdvisoryAreaToPolygon(advisory.latitude, advisory.longitude, area.ne, area.se, area.sw, area.nw);
 //					windG2.draw(p);
@@ -1584,7 +1608,7 @@ public class CAPanel extends JPanel {
 //					windG2.setColor(new Color(250, 153, 20)); // orange
 //					windG2.setColor(new Color(250, 92, 89)); // red with mid saturation
 //					windG2.setColor(c50);
-					windG2.setColor(new Color(c50.getRed(), c50.getGreen(), c50.getBlue(), shortBrushAlpha));
+					windG2.setColor(new Color(c50.getRed(), c50.getGreen(), c50.getBlue(), brushAlpha));
 
 					strokeImage = wind50Stroke;
 //					continue;
@@ -1597,7 +1621,7 @@ public class CAPanel extends JPanel {
 //					windG2.setColor(new Color(250, 0, 20)); // red
 //					windG2.setColor(new Color(249, 10, 18)); // red with high saturation
 //					windG2.setColor(c64);
-					windG2.setColor(new Color(c64.getRed(), c64.getGreen(), c64.getBlue(), shortBrushAlpha));
+					windG2.setColor(new Color(c64.getRed(), c64.getGreen(), c64.getBlue(), brushAlpha));
 
 					strokeImage = wind64Stroke;
 //					continue;
@@ -1644,7 +1668,8 @@ public class CAPanel extends JPanel {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		if (!firstTrackPoint) {
-			g2.setColor(this.trackColor);
+//			g2.setColor(this.trackColor);
+            g2.setColor(new Color(trackColor.getRed(), trackColor.getGreen(), trackColor.getBlue(), brushAlpha+20));
 			g2.setStroke(new BasicStroke(2.f));
 //			g2.setStroke(new SloppyStroke(2.0f, 2.0f));
 			drawTrack(g2, lastAdvisory, advisory);

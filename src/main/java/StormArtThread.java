@@ -87,7 +87,7 @@ public class StormArtThread extends Thread {
 				
 				ForecastAdvisory advisory = (ForecastAdvisory)advisoryIterator.next();
 				//imagePanel.nextAdvisory3(advisory, newStorm);  // long stroke method
-				imagePanel.nextAdvisory(advisory, newStorm);  // short stroke method
+				imagePanel.nextAdvisory(collection, advisory, newStorm);  // short stroke method
 
 				timeLabel.setText(storm.getName() + ": " + advisory.year + "." + df.format(advisory.month) + "." + df.format(advisory.day) + " " + df.format(advisory.hour) + "00Z");
 				if (newStorm) {

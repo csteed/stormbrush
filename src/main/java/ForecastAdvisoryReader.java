@@ -251,7 +251,7 @@ public class ForecastAdvisoryReader {
 			System.exit(0);
 		}
 		
-		ArrayList stormCollections = new ArrayList();
+		ArrayList<ForecastAdvisoryCollection> stormCollections = new ArrayList<ForecastAdvisoryCollection>();
 		
 		for (int i = 1; i < args.length; i += 2) {
 			int year = Integer.parseInt(args[i]);
