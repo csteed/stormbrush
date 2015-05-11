@@ -32,29 +32,30 @@ public class CAPanel extends JPanel {
 	private double xFactor, yFactor;
 	
 	public static final int shortBrushAlpha = 50/*110*//*120*/;
-	public static final int shortBrushAlphaMax = 60;
-    public static final int shortBrushAlphaMin = 10;
+	public static final int shortBrushAlphaMax = 50;
+    public static final int shortBrushAlphaMin = 5;
 	//private Color trackColor = new Color(214, 24, 34);
 	//private Color trackColor = new Color(165, 91, 160);
 	//private Color trackColor = new Color(128, 0, 255);
 	private Color trackColor = Color.orange;
 	//private Color trackColor = Color.yellow;
+//	private Color trackColor = Color.red;
 
 	
 	private Color politicalBoundaryColor = new Color(70, 70, 70);
 	private Color seaColor = new Color(190, 192, 195); // political boundaries in background map
 	private Color landColor = new Color(220, 222, 225);
 	// Legible Cities
-//	Color c34 = new Color (48, 29, 123, MAX_ALPHA);
-//	Color c50 = new Color (92, 61, 96, MAX_ALPHA);
-//	Color c64 = new Color (221, 18, 37, MAX_ALPHA);
+//	public static Color c34 = new Color (48, 29, 123, MAX_ALPHA);
+//	public static Color c50 = new Color (92, 61, 96, MAX_ALPHA);
+//	public static Color c64 = new Color (221, 18, 37, MAX_ALPHA);
 	
 	// Dykes
 //	private Color c64 = new Color (253, 242, 188, MAX_ALPHA);
 //	private Color c50 = new Color (250, 200, 109, MAX_ALPHA);
 //	private Color c34 = new Color (190, 125, 73, MAX_ALPHA);
 //	public static final Color c64 = new Color (224, 194, 39, MAX_ALPHA);
-    public static final Color c64 = new Color (221, 190, 39, MAX_ALPHA);
+    public static final Color c64 = new Color (221, 189, 32, MAX_ALPHA);
     public static final Color c50 = new Color (235, 126, 0, MAX_ALPHA);
 	public static final Color c34 = new Color (236, 72, 0, MAX_ALPHA);
 	public static final Color s12 = new Color (113, 113, 209, MAX_ALPHA);
