@@ -94,7 +94,8 @@ public class CAPanel extends JPanel {
 	public CAPanel(BufferedImage backgroundImage, double west, double east, double south, double north) {
 		this.backgroundImage = backgroundImage;
 		resetForeground();
-		
+
+		System.out.println("Orange color is " + Color.orange.getRed() + ", " + Color.orange.getGreen() + ", " + Color.orange.getBlue());
 		createStrokeImage((int)(long_stroke_width), (int)(long_stroke_height));
 //		foregroundImage = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 //		((Graphics2D)foregroundImage.getGraphics()).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

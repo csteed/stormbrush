@@ -62,10 +62,12 @@ public class TrackDrawingTest {
 				Graphics2D g2 = (Graphics2D)g;
 				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-				Color background = new Color(234, 234, 234);
-				g2.setColor(background);
+//				Color background = new Color(234, 234, 234);
+				g2.setColor(Color.white);
 				g2.fillRect(0, 0, getWidth(), getHeight());
-				
+
+
+
 				//int x1 = 20, y1 = 30, x2 = getWidth()-60, y2 = 30;
 				int x1 = 20, y1 = 30, x2 = 500, y2 = 30;
 				int area0[] = {10, 10, 20, 20};
@@ -100,7 +102,7 @@ public class TrackDrawingTest {
 //				g2.draw(ellipse);
 				
 //				g2.setColor(Color.green);
-				drawLine(g2, x1, y1, 230, 50, x2, y2, 50, 10);
+				drawLine(g2, x1, y1, 230, 70, x2, y2, 50, 10);
 				
 				g2.setColor(Color.black);
 				Line2D.Float line = new Line2D.Float(x1, y1, x2, y2);
@@ -314,13 +316,28 @@ public class TrackDrawingTest {
 			if (shape.contains(col, row)) {
 				g2.rotate(orientation, col, row);
 				Rectangle2D.Float stroke = new Rectangle2D.Float(col-stroke_width/2, row-stroke_height/2, stroke_width, stroke_height);
-//				g2.drawImage(strokeImage, (int)stroke.getMinX(), (int)stroke.getMinY(), (int)stroke.getWidth(), (int)stroke.getHeight(), null);
-				
 				g2.setColor(c);
 				g2.fill(stroke);
-				g2.setColor(Color.black);
-				//g2.draw(stroke);
+				int innerStrokeWidth = stroke_width/2;
+				int innerStrokeHeight = stroke_height/2;
+				Rectangle2D.Float innerStroke = new Rectangle2D.Float(col-innerStrokeWidth/2, row-innerStrokeHeight/2, innerStrokeWidth, innerStrokeHeight);
+				g2.setColor(c.brighter());
+				g2.fill(innerStroke);
+//				g2.drawImage(strokeImage, (int)stroke.getMinX(), (int)stroke.getMinY(), (int)stroke.getWidth(), (int)stroke.getHeight(), this);
+//				g2.setColor(Color.darkGray);
+				//g2.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue()));
+//				g2.draw(stroke);
 				g2.rotate(-orientation, col, row);
+
+//				g2.rotate(orientation, col, row);
+//				Rectangle2D.Float stroke = new Rectangle2D.Float(col-stroke_width/2, row-stroke_height/2, stroke_width, stroke_height);
+////				g2.drawImage(strokeImage, (int)stroke.getMinX(), (int)stroke.getMinY(), (int)stroke.getWidth(), (int)stroke.getHeight(), null);
+//
+//				g2.setColor(c);
+//				g2.fill(stroke);
+//				g2.setColor(Color.black);
+//				//g2.draw(stroke);
+//				g2.rotate(-orientation, col, row);
 			}
 		}
 		/*
@@ -384,7 +401,7 @@ public class TrackDrawingTest {
 				
 //				g2.setColor(new Color(ii, ii, ii));
 //				g2.setColor(new Color(250, 0, 20));
-				g2.setColor(new Color(CAPanel.c34.getRed(), CAPanel.c34.getGreen(), CAPanel.c34.getBlue(), CAPanel.shortBrushAlpha));
+				g2.setColor(new Color(CAPanel.c34.getRed(), CAPanel.c34.getGreen(), CAPanel.c34.getBlue(), CAPanel.shortBrushAlphaMax));
 				
 				Ellipse2D.Float ellipse = new Ellipse2D.Float(x-isz, iy-isz, isz*2, isz*2);
 				if (steep) {
@@ -415,7 +432,7 @@ public class TrackDrawingTest {
 				
 //				g2.setColor(new Color(ii, ii, ii));
 //				g2.setColor(new Color(250, 0, 20));
-				g2.setColor(new Color(CAPanel.c34.getRed(), CAPanel.c34.getGreen(), CAPanel.c34.getBlue(), CAPanel.shortBrushAlpha));
+				g2.setColor(new Color(CAPanel.c34.getRed(), CAPanel.c34.getGreen(), CAPanel.c34.getBlue(), CAPanel.shortBrushAlphaMax));
 				
 				
 				Ellipse2D.Float ellipse = new Ellipse2D.Float(x-isz, iy-isz, isz*2, isz*2);
