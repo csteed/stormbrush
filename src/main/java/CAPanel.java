@@ -37,7 +37,7 @@ public class CAPanel extends JPanel {
 	//private Color trackColor = new Color(214, 24, 34);
 	//private Color trackColor = new Color(165, 91, 160);
 	//private Color trackColor = new Color(128, 0, 255);
-	private Color trackColor = Color.orange;
+	private Color trackColor = Color.yellow;
 	//private Color trackColor = Color.yellow;
 //	private Color trackColor = Color.red;
 
@@ -55,21 +55,21 @@ public class CAPanel extends JPanel {
 //	private Color c50 = new Color (250, 200, 109, MAX_ALPHA);
 //	private Color c34 = new Color (190, 125, 73, MAX_ALPHA);
 //	public static final Color c64 = new Color (224, 194, 39, MAX_ALPHA);
-    public static final Color c64 = new Color (221, 189, 32, MAX_ALPHA);
-    public static final Color c50 = new Color (235, 126, 0, MAX_ALPHA);
-	public static final Color c34 = new Color (236, 72, 0, MAX_ALPHA);
-	public static final Color s12 = new Color (113, 113, 209, MAX_ALPHA);
+    public static final Color c64 = new Color (253, 180, 6, MAX_ALPHA);
+    public static final Color c50 = new Color (207, 158, 30, MAX_ALPHA);
+	public static final Color c34 = new Color (192, 120, 20, MAX_ALPHA);
+	public static final Color s12 = new Color (94, 125, 209, MAX_ALPHA);
 
 	// Healey
 //	Color c34 = new Color (111, 33, 23, MAX_ALPHA);
 //	Color c50 = new Color (214, 24, 34, MAX_ALPHA);
 //	Color c64 = new Color (165, 91, 160, MAX_ALPHA);
 
-	private int spacing_factor_eye = 8;
+	private int spacing_factor_eye = 6;
 	private int spacing_factor_34knots = 10/*12*/;
 	private int spacing_factor_50knots = 10/*8*/;
-	private int spacing_factor_64knots = 10/*4*/;
-	private int spacing_factor_12seas = 8;
+	private int spacing_factor_64knots = 8/*4*/;
+	private int spacing_factor_12seas = 10;
 	
 	private int windMatrix[][][] = null;
 	
@@ -248,9 +248,7 @@ public class CAPanel extends JPanel {
 			int col = index - (row * cols);
 			row = (int)bounds.getMinY() + (row*(stroke_y_spacing));
 			col = (int)bounds.getMinX() + (col*(stroke_x_spacing));
-            if ((stroke_y_spacing-1) <= 0) {
-                System.out.println("Yo");
-            }
+
 			row += r.nextInt(stroke_y_spacing-1);
 			col += r.nextInt(stroke_x_spacing-1);
 //			System.out.println("row="+row +" col="+col);
@@ -262,8 +260,9 @@ public class CAPanel extends JPanel {
 				int innerStrokeWidth = stroke_width/2;
 				int innerStrokeHeight = stroke_height/2;
 				Rectangle2D.Float innerStroke = new Rectangle2D.Float(col-innerStrokeWidth/2, row-innerStrokeHeight/2, innerStrokeWidth, innerStrokeHeight);
-				g2.setColor(c.brighter());
+				g2.setColor(c.darker());
 				g2.fill(innerStroke);
+
 //				g2.drawImage(strokeImage, (int)stroke.getMinX(), (int)stroke.getMinY(), (int)stroke.getWidth(), (int)stroke.getHeight(), this);
 //				g2.setColor(Color.darkGray);
 				//g2.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue()));
@@ -1671,8 +1670,8 @@ public class CAPanel extends JPanel {
 
 		if (!firstTrackPoint) {
 //			g2.setColor(this.trackColor);
-            g2.setColor(new Color(trackColor.getRed(), trackColor.getGreen(), trackColor.getBlue(), brushAlpha+20));
-			g2.setStroke(new BasicStroke(2.f));
+            g2.setColor(new Color(trackColor.getRed(), trackColor.getGreen(), trackColor.getBlue(), brushAlpha + 20));
+//			g2.setStroke(new BasicStroke(2.f));
 //			g2.setStroke(new SloppyStroke(2.0f, 2.0f));
 			drawTrack(g2, lastAdvisory, advisory);
 //			g2.drawLine(lastPointX, lastPointY, x, y);

@@ -66,8 +66,6 @@ public class TrackDrawingTest {
 				g2.setColor(Color.white);
 				g2.fillRect(0, 0, getWidth(), getHeight());
 
-
-
 				//int x1 = 20, y1 = 30, x2 = getWidth()-60, y2 = 30;
 				int x1 = 20, y1 = 30, x2 = 500, y2 = 30;
 				int area0[] = {10, 10, 20, 20};

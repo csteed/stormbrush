@@ -46,149 +46,155 @@ public class ForecastAdvisoryReader {
 				
 				ForecastAdvisory advisory = new ForecastAdvisory();
 				advisoryCollection.advisoryList.add(advisory);
-				
-				while ((line2 = advisoryReader.readLine()) != null) {
-					
-					if (line2.contains("<pre>")) {
-						inPre = true;
-						continue;
-					} else if (line2.contains("</pre>")) {
-						break;
-					}
-							
-					if (inPre) {
-//						System.out.println("  " + line2);
 
-						if (line_number == 5) {
-							System.out.println("Date/Time is '" + line2 + "'");
-							advisory.hour = Short.parseShort(line2.substring(0,2));
-							String monthStr = line2.substring(10, 13);
-							if (monthStr.equals("JAN"))
-								advisory.month = 1;
-							else if (monthStr.equals("FEB"))
-								advisory.month = 2;
-							else if (monthStr.equals("MAR"))
-								advisory.month = 3;
-							else if (monthStr.equals("APR"))
-								advisory.month = 4;
-							else if (monthStr.equals("MAY"))
-								advisory.month = 5;
-							else if (monthStr.equals("JUN"))
-								advisory.month = 6;
-							else if (monthStr.equals("JUL"))
-								advisory.month = 7;
-							else if (monthStr.equals("AUG"))
-								advisory.month = 8;
-							else if (monthStr.equals("SEP"))
-								advisory.month = 9;
-							else if (monthStr.equals("OCT"))
-								advisory.month = 10;
-							else if (monthStr.equals("NOV"))
-								advisory.month = 11;
-							else 
-								advisory.month = 12;
-							advisory.day = Short.parseShort(line2.substring(14, 16));
-							advisory.year = Short.parseShort(line2.substring(17,21));
-						} else if (line2.contains("CENTER LOCATED NEAR") &&
-								   line2.startsWith("REPEAT")) {
-							int start_idx = 0;
-							for (; start_idx < line2.length(); start_idx++) {
-								if (Character.isDigit(line2.charAt(start_idx))) {
-									break;
-								}
-							}
-							advisory.latitude = Float.parseFloat(line2.substring(start_idx, start_idx+4).trim());
-							if (line2.charAt(start_idx+4) == 'S')
-								advisory.latitude *= -1.;
-							advisory.longitude = Float.parseFloat(line2.substring(start_idx+6, start_idx+11).trim());
-//							System.out.println("char at start_idx + 11 is '"+line2.charAt(start_idx+11) + "'");
-//							System.out.println("char at start_idx + 4 is '"+line2.charAt(start_idx+4) + "'");
-							if (line2.charAt(start_idx+11) == 'W')
-								advisory.longitude *= -1.;
-//							System.out.println("Lat = '"+latStr+"'  Lon = '"+lonStr+"'");
-						} else if (line2.startsWith("EYE DIAMETER")) {
-							advisory.eye_diameter = Short.parseShort(line2.substring(13, 16).trim());
-						} else if (line2.startsWith("PRESENT MOVEMENT")) {
-							int idx = line2.indexOf("DEGREES");
-							if (idx != -1) {
-								advisory.movement_direction = Short.parseShort(line2.substring(idx - 4, idx -1).trim());
-								advisory.movement_speed = Short.parseShort(line2.substring(idx + 11, idx + 14).trim());
-							}							
-						} else if (line2.startsWith("MAX SUSTAINED WINDS")) {
-							advisory.wind = Short.parseShort(line2.substring(20, 23).trim());
-							advisory.gust = Short.parseShort(line2.substring(41, 44).trim());
-							
-//							String windStr = line2.substring(20, 23);
-//							String windGustStr = line2.substring(41, 44);
-//							System.out.println("Wind is '"+windStr +"' and gust is '"+windGustStr+"'");
-							
-							// get the wind and seas radii if listed
-							// read them until WINDS AND SEAS VARY GREATLY....
-							
-							ArrayList windRadiiList = new ArrayList();
-							while ((line2 = advisoryReader.readLine()) != null) {
-								AdvisoryArea area = new AdvisoryArea();
-								area.points = new ArrayList();
-								
-//								short array[] = new short[5];
-								
-								if (line2.startsWith("WINDS AND SEAS VARY")) {
-									break;
-								}
-								
-								double lat_rad = advisory.latitude * DEG2RAD;
-								double lon_rad = advisory.longitude * DEG2RAD;
+				try {
+					while ((line2 = advisoryReader.readLine()) != null) {
 
-								area.value = new Short(line2.substring(0, 2).trim());
-								area.ne = Short.parseShort(line2.substring(12, 15).trim());
-//								double [] coords = JGeodesic.direct1(lat_rad, lon_rad, NE_AZIMUTH, area.ne*NM2METERS, GEODESIC_FLAT_OPTION);
-//								area.points.add(new Point2D.Double(coords[1]*RAD2DEG, coords[0]*RAD2DEG));
-								
-								area.se = Short.parseShort(line2.substring(18, 21).trim());
-//								coords = JGeodesic.direct1(lat_rad, lon_rad, SE_AZIMUTH, area.se*NM2METERS, GEODESIC_FLAT_OPTION);
-//								area.points.add(new Point2D.Double(coords[1]*RAD2DEG, coords[0]*RAD2DEG));
-								
-								area.sw = Short.parseShort(line2.substring(24, 27).trim());
-//								coords = JGeodesic.direct1(lat_rad, lon_rad, SW_AZIMUTH, area.sw*NM2METERS, GEODESIC_FLAT_OPTION);
-//								area.points.add(new Point2D.Double(coords[1]*RAD2DEG, coords[0]*RAD2DEG));
-								
-								area.nw = Short.parseShort(line2.substring(30, 33).trim());
-//								coords = JGeodesic.direct1(lat_rad, lon_rad, NW_AZIMUTH, area.nw*NM2METERS, GEODESIC_FLAT_OPTION);
-//								area.points.add(new Point2D.Double(coords[1]*RAD2DEG, coords[0]*RAD2DEG));
-								
-//								array[0] = Short.parseShort(line2.substring(0, 2).trim());
-//								array[1] = Short.parseShort(line2.substring(12, 15).trim());
-//								array[2] = Short.parseShort(line2.substring(18, 21).trim());
-//								array[3] = Short.parseShort(line2.substring(24, 27).trim());
-//								array[4] = Short.parseShort(line2.substring(30, 33).trim());
-								
-//								int ne_dist = Integer.parseInt(line2.substring(12, 15).trim());
-//								int se_dist = Integer.parseInt(line2.substring(18, 21).trim());
-//								int sw_dist = Integer.parseInt(line2.substring(24, 27).trim());
-//								int nw_dist = Integer.parseInt(line2.substring(30, 33).trim());
-								
-								
-								
-//								System.out.println("......." + ne_dist +"NE "+se_dist+"SE "+ sw_dist+"SW "+ nw_dist+"NW.");
-								if (line2.subSequence(3, 5).equals("KT")) {
-//									int radii_wind = Integer.parseInt(line2.substring(0, 2).trim());
-//									System.out.println(radii_wind + " KT");
-//									windRadiiList.add(array);
-									windRadiiList.add(area);
-								} else {
-									advisory.seaRadii = area;
-//									advisory.sea_radii = array;
-//									int radii_seas = Integer.parseInt(line2.substring(0, 2).trim());
-//									System.out.println(radii_seas + " FT SEAS");
-								}
-							}
-							advisory.windRadiiList = windRadiiList;
+						if (line2.contains("<pre>")) {
+							inPre = true;
+							continue;
+						} else if (line2.contains("</pre>")) {
+							break;
 						}
-						
-						line_number++;
+
+						if (inPre) {
+							//						System.out.println("  " + line2);
+
+							if (line_number == 5) {
+								System.out.println("Date/Time is '" + line2 + "'");
+								advisory.hour = Short.parseShort(line2.substring(0, 2));
+								String monthStr = line2.substring(10, 13);
+								if (monthStr.equals("JAN"))
+									advisory.month = 1;
+								else if (monthStr.equals("FEB"))
+									advisory.month = 2;
+								else if (monthStr.equals("MAR"))
+									advisory.month = 3;
+								else if (monthStr.equals("APR"))
+									advisory.month = 4;
+								else if (monthStr.equals("MAY"))
+									advisory.month = 5;
+								else if (monthStr.equals("JUN"))
+									advisory.month = 6;
+								else if (monthStr.equals("JUL"))
+									advisory.month = 7;
+								else if (monthStr.equals("AUG"))
+									advisory.month = 8;
+								else if (monthStr.equals("SEP"))
+									advisory.month = 9;
+								else if (monthStr.equals("OCT"))
+									advisory.month = 10;
+								else if (monthStr.equals("NOV"))
+									advisory.month = 11;
+								else
+									advisory.month = 12;
+								advisory.day = Short.parseShort(line2.substring(14, 16));
+								advisory.year = Short.parseShort(line2.substring(17, 21));
+							} else if (line2.contains("CENTER LOCATED NEAR") &&
+									line2.startsWith("REPEAT")) {
+								int start_idx = 0;
+								for (; start_idx < line2.length(); start_idx++) {
+									if (Character.isDigit(line2.charAt(start_idx))) {
+										break;
+									}
+								}
+								advisory.latitude = Float.parseFloat(line2.substring(start_idx, start_idx + 4).trim());
+								if (line2.charAt(start_idx + 4) == 'S')
+									advisory.latitude *= -1.;
+								advisory.longitude = Float.parseFloat(line2.substring(start_idx + 6, start_idx + 11).trim());
+								//							System.out.println("char at start_idx + 11 is '"+line2.charAt(start_idx+11) + "'");
+								//							System.out.println("char at start_idx + 4 is '"+line2.charAt(start_idx+4) + "'");
+								if (line2.charAt(start_idx + 11) == 'W')
+									advisory.longitude *= -1.;
+								//							System.out.println("Lat = '"+latStr+"'  Lon = '"+lonStr+"'");
+							} else if (line2.startsWith("EYE DIAMETER")) {
+								advisory.eye_diameter = Short.parseShort(line2.substring(13, 16).trim());
+							} else if (line2.startsWith("PRESENT MOVEMENT")) {
+								int idx = line2.indexOf("DEGREES");
+								if (idx != -1) {
+									advisory.movement_direction = Short.parseShort(line2.substring(idx - 4, idx - 1).trim());
+									advisory.movement_speed = Short.parseShort(line2.substring(idx + 11, idx + 14).trim());
+								}
+							} else if (line2.startsWith("MAX SUSTAINED WINDS")) {
+								advisory.wind = Short.parseShort(line2.substring(20, 23).trim());
+								advisory.gust = Short.parseShort(line2.substring(41, 44).trim());
+
+								//							String windStr = line2.substring(20, 23);
+								//							String windGustStr = line2.substring(41, 44);
+								//							System.out.println("Wind is '"+windStr +"' and gust is '"+windGustStr+"'");
+
+								// get the wind and seas radii if listed
+								// read them until WINDS AND SEAS VARY GREATLY....
+
+								ArrayList windRadiiList = new ArrayList();
+								while ((line2 = advisoryReader.readLine()) != null) {
+									AdvisoryArea area = new AdvisoryArea();
+									area.points = new ArrayList();
+
+									//								short array[] = new short[5];
+
+									if (line2.startsWith("WINDS AND SEAS VARY")) {
+										break;
+									}
+
+									double lat_rad = advisory.latitude * DEG2RAD;
+									double lon_rad = advisory.longitude * DEG2RAD;
+
+									area.value = new Short(line2.substring(0, 2).trim());
+									area.ne = Short.parseShort(line2.substring(12, 15).trim());
+									//								double [] coords = JGeodesic.direct1(lat_rad, lon_rad, NE_AZIMUTH, area.ne*NM2METERS, GEODESIC_FLAT_OPTION);
+									//								area.points.add(new Point2D.Double(coords[1]*RAD2DEG, coords[0]*RAD2DEG));
+
+									area.se = Short.parseShort(line2.substring(18, 21).trim());
+									//								coords = JGeodesic.direct1(lat_rad, lon_rad, SE_AZIMUTH, area.se*NM2METERS, GEODESIC_FLAT_OPTION);
+									//								area.points.add(new Point2D.Double(coords[1]*RAD2DEG, coords[0]*RAD2DEG));
+
+									area.sw = Short.parseShort(line2.substring(24, 27).trim());
+									//								coords = JGeodesic.direct1(lat_rad, lon_rad, SW_AZIMUTH, area.sw*NM2METERS, GEODESIC_FLAT_OPTION);
+									//								area.points.add(new Point2D.Double(coords[1]*RAD2DEG, coords[0]*RAD2DEG));
+
+									area.nw = Short.parseShort(line2.substring(30, 33).trim());
+									//								coords = JGeodesic.direct1(lat_rad, lon_rad, NW_AZIMUTH, area.nw*NM2METERS, GEODESIC_FLAT_OPTION);
+									//								area.points.add(new Point2D.Double(coords[1]*RAD2DEG, coords[0]*RAD2DEG));
+
+									//								array[0] = Short.parseShort(line2.substring(0, 2).trim());
+									//								array[1] = Short.parseShort(line2.substring(12, 15).trim());
+									//								array[2] = Short.parseShort(line2.substring(18, 21).trim());
+									//								array[3] = Short.parseShort(line2.substring(24, 27).trim());
+									//								array[4] = Short.parseShort(line2.substring(30, 33).trim());
+
+									//								int ne_dist = Integer.parseInt(line2.substring(12, 15).trim());
+									//								int se_dist = Integer.parseInt(line2.substring(18, 21).trim());
+									//								int sw_dist = Integer.parseInt(line2.substring(24, 27).trim());
+									//								int nw_dist = Integer.parseInt(line2.substring(30, 33).trim());
+
+
+									//								System.out.println("......." + ne_dist +"NE "+se_dist+"SE "+ sw_dist+"SW "+ nw_dist+"NW.");
+									if (line2.subSequence(3, 5).equals("KT")) {
+										//									int radii_wind = Integer.parseInt(line2.substring(0, 2).trim());
+										//									System.out.println(radii_wind + " KT");
+										//									windRadiiList.add(array);
+										windRadiiList.add(area);
+									} else {
+										advisory.seaRadii = area;
+										//									advisory.sea_radii = array;
+										//									int radii_seas = Integer.parseInt(line2.substring(0, 2).trim());
+										//									System.out.println(radii_seas + " FT SEAS");
+									}
+								}
+								advisory.windRadiiList = windRadiiList;
+							}
+
+							line_number++;
+						}
+
 					}
-					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					System.out.println("Error parsing record: Skipping");
+					continue;
 				}
+
 				System.out.println("advisory: " + advisory);
 				advisoryReader.close();
 
