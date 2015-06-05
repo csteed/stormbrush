@@ -18,7 +18,7 @@ public class StormArtThread extends Thread {
 	private StormDay lastDay;
 	private StormObservation lastObs;
 	private DecimalFormat df;
-	private ArrayList collectionList;
+	private ArrayList<ForecastAdvisoryCollection> collectionList;
 	
 	public boolean running = false;
 	
@@ -37,7 +37,7 @@ public class StormArtThread extends Thread {
 		df.setMinimumIntegerDigits(2);
 	}*/
 	
-	StormArtThread (ArrayList collectionList, Storm [] storms, CAPanel imagePanel, JLabel timeLabel) {
+	StormArtThread (ArrayList<ForecastAdvisoryCollection> collectionList, Storm [] storms, CAPanel imagePanel, JLabel timeLabel) {
 		super();
 		this.collectionList = collectionList;
 		this.storms = storms;
@@ -68,6 +68,24 @@ public class StormArtThread extends Thread {
 	}
 	
 	public void run() {
+		if (collectionList.size() > 1) {
+			short maxWind = Short.MIN_VALUE;
+			short minWind = Short.MAX_VALUE;
+			for (ForecastAdvisoryCollection advisoryCollection : collectionList) {
+				if (advisoryCollection.maxWind > maxWind) {
+					maxWind = advisoryCollection.maxWind;
+				}
+				if (advisoryCollection.minWind < minWind) {
+					minWind = advisoryCollection.minWind;
+				}
+			}
+			for (ForecastAdvisoryCollection advisoryCollection : collectionList) {
+				advisoryCollection.minWind = minWind;
+				advisoryCollection.maxWind = maxWind;
+			}
+
+		}
+
 		for (int istorm = 0; istorm < collectionList.size(); istorm++) {
 			if (!running) {
 				return;
